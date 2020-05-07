@@ -1,0 +1,4 @@
+azure:
+  activedirectory:
+    session-stateless: true
+    client-id:

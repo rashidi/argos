@@ -8,7 +8,7 @@ on:
       - master
   pull_request:
       types: [opened, synchronize, reopened]
-name: Main Workflow
+
 jobs:
   sonarcloud:
     runs-on: ubuntu-latest

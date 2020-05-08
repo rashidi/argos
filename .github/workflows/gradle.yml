@@ -10,10 +10,9 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  prepare:
+    name: Setting up environment
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Fetch recent updates
@@ -24,6 +23,13 @@ jobs:
         java-version: 11.0.6
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+    
+  build-and-test:
+    name: Build and test
+    needs: prepare
+    runs-on: ubuntu-latest
+
+    steps:
     - name: Build with Gradle
       run: ./gradlew build jacocoTestReport sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
       env:

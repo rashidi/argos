@@ -11,20 +11,29 @@ on:
 
 jobs:
   build:
-
+    name: Build Artifact
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
     - name: Fetch recent updates
       run: git fetch --prune --unshallow
+
     - name: Set up JDK 11
       uses: actions/setup-java@v1
       with:
         java-version: 11.0.6
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
     - name: Build with Gradle
-      run: ./gradlew build jacocoTestReport sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
+      run: ./gradlew build 
+
+    - name: Generate Coverage Report
+      run: ./gradlew jacocoTestReport
+
+    - name: Perform Code Analysis
+      run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -27,7 +27,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: environment
-        path: /
+        path: ./
     
   build-and-test:
     name: Build and test

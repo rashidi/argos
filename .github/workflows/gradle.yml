@@ -21,8 +21,6 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11.0.6
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
     - name: Upload environment artifact
       uses: actions/upload-artifact@v2
       with:
@@ -39,6 +37,8 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: environment
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build jacocoTestReport sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
       env:

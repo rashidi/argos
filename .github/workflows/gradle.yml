@@ -11,7 +11,7 @@ on:
 
 jobs:
   prepare:
-    name: Setting up environment
+    name: Set up environment
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -23,6 +23,11 @@ jobs:
         java-version: 11.0.6
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+    - name: Upload environment artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: environment
+        path: /
     
   build-and-test:
     name: Build and test
@@ -30,6 +35,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Get environment artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: environment
     - name: Build with Gradle
       run: ./gradlew build jacocoTestReport sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
       env:

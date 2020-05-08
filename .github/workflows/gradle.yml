@@ -10,9 +10,10 @@ on:
     branches: [ master ]
 
 jobs:
-  prepare:
-    name: Set up environment
+  build:
+
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
     - name: Fetch recent updates
@@ -21,25 +22,13 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11.0.6
-    - name: Upload environment artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: environment
-        path: ./
-    
-  build-and-test:
-    name: Build and test
-    needs: prepare
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Get environment artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: environment
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build jacocoTestReport sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
+    - name: Generate Report Coverage
+      run: ./gradlew jacocoTestReport sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
+    - name: Perform Code Analysis
+      run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

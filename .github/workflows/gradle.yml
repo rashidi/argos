@@ -32,8 +32,8 @@ jobs:
 
     - name: Generate Coverage Report
       run: ./gradlew jacocoTestReport
-
-    - name: Perform Code Analysis
-      run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Coveralls
+      uses: coverallsapp/github-action@v1.1.1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}

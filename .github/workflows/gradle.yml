@@ -37,3 +37,10 @@ jobs:
       run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: CodeCov
+      uses: wei/curl@v1.1.1
+      with:
+        args: https://codecov.io/bash
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

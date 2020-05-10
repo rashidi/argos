@@ -41,6 +41,4 @@ jobs:
     - name: CodeCov
       uses: wei/curl@v1.1.1
       with:
-        args: https://codecov.io/bash
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        args: https://codecov.io/bash -t ${{ secrects.CODECOV_TOKEN }}

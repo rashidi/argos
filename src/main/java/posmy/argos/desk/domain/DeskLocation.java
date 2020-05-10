@@ -1,18 +1,15 @@
 package posmy.argos.desk.domain;
 
-import lombok.Data;
-import lombok.NonNull;
+import lombok.Value;
 
 /**
  * @author Rashidi Zin
  */
-@Data
+@Value
 public class DeskLocation {
 
-    @NonNull
-    private String row;
+    String row;
 
-    @NonNull
-    private Integer column;
+    Integer column;
 
 }

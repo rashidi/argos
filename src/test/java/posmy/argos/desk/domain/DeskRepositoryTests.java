@@ -1,5 +1,6 @@
 package posmy.argos.desk.domain;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
@@ -47,6 +48,11 @@ class DeskRepositoryTests {
         assertThat(repository.findByAreaAndStatus(DATA_AND_TECHNOLOGY, VACANT)).hasSize(1);
 
         assertThat(repository.findByAreaAndStatus(COLLABORATION, VACANT)).isEmpty();
+    }
+
+    @AfterEach
+    void deleteAll() {
+        repository.deleteAll();
     }
 
 }

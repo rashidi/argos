@@ -38,7 +38,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
-    - name: CodeCov
-      uses: wei/curl@v1.1.1
+    - name: Codecov
+      uses: codecov/codecov-action@v1.0.7
       with:
-        args: https://codecov.io/bash -t ${{ secrets.CODECOV_TOKEN }}
+        # User defined upload name. Visible in Codecov UI
+        name: CodeCov
+        # Specify whether or not CI build should fail if Codecov runs into an error during upload
+        fail_ci_if_error: true

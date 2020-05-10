@@ -64,6 +64,26 @@ class DeskRepositoryTests {
         assertThat(repository.findByAreaAndStatus(COLLABORATION, VACANT)).isEmpty();
     }
 
+    @Test
+    void saveWithSelfAssignedId() {
+        var desk = new Desk();
+
+        var id = "36bb818b-23f4-483e-b858-ae8d9ff04e63";
+        var location = new DeskLocation("D", 12);
+
+        desk.setId(id);
+        desk.setArea(DATA_AND_TECHNOLOGY);
+        desk.setLocation(location);
+        desk.setStatus(VACANT);
+
+        var persisted = repository.save(desk);
+
+        assertThat(repository.findById(id))
+                .isNotEmpty()
+                .get()
+                .isEqualTo(persisted);
+    }
+
     @AfterEach
     void deleteAll() {
         repository.deleteAll();

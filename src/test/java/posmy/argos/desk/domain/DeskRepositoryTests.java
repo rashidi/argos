@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.data.Index.atIndex;
 import static org.assertj.core.groups.Tuple.tuple;
 import static posmy.argos.desk.domain.DeskArea.COLLABORATION;
 import static posmy.argos.desk.domain.DeskArea.DATA_AND_TECHNOLOGY;
@@ -24,18 +25,22 @@ class DeskRepositoryTests {
     @Test
     void findByStatus() {
         var desk = new Desk();
-        var location = new DeskLocation("D", 12);
 
         desk.setArea(DATA_AND_TECHNOLOGY);
-        desk.setLocation(location);
+        desk.setLocation(new DeskLocation("D", 12));
         desk.setStatus(VACANT);
 
         repository.save(desk);
 
         assertThat(repository.findByStatus(VACANT))
                 .hasSize(1)
-                .extracting(Desk::getArea, Desk::getLocation, Desk::getStatus)
-                .containsOnly(tuple(DATA_AND_TECHNOLOGY, location, VACANT));
+                .satisfies(persisted -> {
+                        assertThat(persisted.getId()).isNotNull();
+                        assertThat(persisted.getLocation()).extracting(DeskLocation::getRow, DeskLocation::getColumn).containsOnly("D", 12);
+                        }, atIndex(0)
+                )
+                .extracting(Desk::getArea, Desk::getStatus)
+                .containsOnly(tuple(DATA_AND_TECHNOLOGY, VACANT));
 
         assertThat(repository.findByStatus(OCCUPIED)).isEmpty();
     }
@@ -54,7 +59,7 @@ class DeskRepositoryTests {
         assertThat(repository.findByAreaAndStatus(DATA_AND_TECHNOLOGY, VACANT))
                 .hasSize(1)
                 .extracting(Desk::getArea, Desk::getLocation, Desk::getStatus)
-                .containsOnly(tuple(DATA_AND_TECHNOLOGY, location, VACANT));;
+                .containsOnly(tuple(DATA_AND_TECHNOLOGY, location, VACANT));
 
         assertThat(repository.findByAreaAndStatus(COLLABORATION, VACANT)).isEmpty();
     }

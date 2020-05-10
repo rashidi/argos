@@ -31,7 +31,7 @@ jobs:
       run: ./gradlew build 
 
     - name: Generate Coverage Report
-      run: ./gradlew jacocoTestReport
+      run: ./gradlew jacocoTestReport codeCoverageReport
 
     - name: Perform Code Analysis
       run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30

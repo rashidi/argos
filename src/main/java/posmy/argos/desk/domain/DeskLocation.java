@@ -1,12 +1,14 @@
 package posmy.argos.desk.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
  * @author Rashidi Zin
  */
-@Data
+@Getter
+@Setter
 @Accessors(fluent = true)
 public class DeskLocation {
 

@@ -24,22 +24,18 @@ class DeskRepositoryTests {
 
     @Test
     void findByStatus() {
-        var desk = new Desk();
-
-        desk.setArea(DATA_AND_TECHNOLOGY);
-        desk.setLocation(new DeskLocation("D", 12));
-        desk.setStatus(VACANT);
+        var desk = new Desk().area(DATA_AND_TECHNOLOGY).location(new DeskLocation().row("D").column(12)).status(VACANT);
 
         repository.save(desk);
 
         assertThat(repository.findByStatus(VACANT))
                 .hasSize(1)
                 .satisfies(persisted -> {
-                        assertThat(persisted.getId()).isNotNull();
-                        assertThat(persisted.getLocation()).extracting(DeskLocation::getRow, DeskLocation::getColumn).containsOnly("D", 12);
+                        assertThat(persisted.id()).isNotNull();
+                        assertThat(persisted.location()).extracting(DeskLocation::row, DeskLocation::column).containsOnly("D", 12);
                         }, atIndex(0)
                 )
-                .extracting(Desk::getArea, Desk::getStatus)
+                .extracting(Desk::area, Desk::status)
                 .containsOnly(tuple(DATA_AND_TECHNOLOGY, VACANT));
 
         assertThat(repository.findByStatus(OCCUPIED)).isEmpty();
@@ -47,18 +43,14 @@ class DeskRepositoryTests {
 
     @Test
     void findByAreaAndStatus() {
-        var desk = new Desk();
-        var location = new DeskLocation("D", 12);
-
-        desk.setArea(DATA_AND_TECHNOLOGY);
-        desk.setLocation(location);
-        desk.setStatus(VACANT);
+        var location = new DeskLocation().row("D").column(12);
+        var desk = new Desk().location(location).area(DATA_AND_TECHNOLOGY).status(VACANT);
 
         repository.save(desk);
 
         assertThat(repository.findByAreaAndStatus(DATA_AND_TECHNOLOGY, VACANT))
                 .hasSize(1)
-                .extracting(Desk::getArea, Desk::getLocation, Desk::getStatus)
+                .extracting(Desk::area, Desk::location, Desk::status)
                 .containsOnly(tuple(DATA_AND_TECHNOLOGY, location, VACANT));
 
         assertThat(repository.findByAreaAndStatus(COLLABORATION, VACANT)).isEmpty();
@@ -66,15 +58,10 @@ class DeskRepositoryTests {
 
     @Test
     void saveWithSelfAssignedId() {
-        var desk = new Desk();
-
         var id = "36bb818b-23f4-483e-b858-ae8d9ff04e63";
-        var location = new DeskLocation("D", 12);
+        var location = new DeskLocation().row("D").column(12);
 
-        desk.setId(id);
-        desk.setArea(DATA_AND_TECHNOLOGY);
-        desk.setLocation(location);
-        desk.setStatus(VACANT);
+        var desk = new Desk().id(id).area(DATA_AND_TECHNOLOGY).location(location).status(VACANT);
 
         var persisted = repository.save(desk);
 

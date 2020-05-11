@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import posmy.argos.desk.domain.DeskLocation;
 
+import java.util.List;
+
 import static java.time.Instant.now;
+import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.HOURS;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,28 +23,30 @@ class DeskOccupiedHistoryRepositoryTests {
     private DeskOccupiedHistoryRepository repository;
 
     @Test
-    void findByLocationAndEndAfter() {
+    void findFirstByLocationOrderByEndDesc() {
+        var today = now();
+        var todayEnd = today.plus(9, HOURS);
+
+        var yesterday = today.minus(1, DAYS);
+        var yesterdayEnd = yesterday.plus(9, HOURS);
+
+        var occupant = "rashidi";
         var location = new DeskLocation().row("D").column(12);
-        var since = now();
-        var end = since.plus(9, HOURS);
 
-        var history = new DeskOccupiedHistory()
-                .location(location)
-                .occupant("rashidi")
-                .since(since)
-                .end(end);
+        repository.saveAll(List.of(
+                new DeskOccupiedHistory().occupant(occupant).location(location).since(yesterday).end(yesterdayEnd),
+                new DeskOccupiedHistory().occupant(occupant).location(location).since(today).end(todayEnd)
+        ));
 
-        repository.save(history);
-
-        assertThat(repository.findByLocationAndEndAfter(location, now()))
+        assertThat(repository.findFirstByLocationOrderByEndDesc(location))
                 .isNotEmpty()
                 .get()
                 .satisfies(persisted -> {
                     assertThat(persisted.id()).isNotNull();
-                    assertThat(persisted.occupant()).isEqualTo(history.occupant());
-                    assertThat(persisted.location()).extracting(DeskLocation::row, DeskLocation::column).containsOnly("D", 12);
-                    assertThat(persisted.since()).isBeforeOrEqualTo(since);
-                    assertThat(persisted.end()).isBeforeOrEqualTo(end);
+                    assertThat(persisted.occupant()).isEqualTo(occupant);
+                    assertThat(persisted.location()).isEqualTo(location);
+                    assertThat(persisted.since()).isAfter(yesterday).isBeforeOrEqualTo(today);
+                    assertThat(persisted.end()).isAfter(yesterdayEnd).isBeforeOrEqualTo(todayEnd);
                 });
     }
 

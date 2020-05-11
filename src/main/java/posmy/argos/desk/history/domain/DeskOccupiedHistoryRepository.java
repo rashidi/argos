@@ -4,7 +4,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import posmy.argos.desk.domain.DeskLocation;
 
-import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -13,6 +12,6 @@ import java.util.Optional;
 @RepositoryRestResource(exported = false)
 public interface DeskOccupiedHistoryRepository extends MongoRepository<DeskOccupiedHistory, String> {
 
-    Optional<DeskOccupiedHistory> findByLocationAndEndAfter(DeskLocation location, Instant end);
+    Optional<DeskOccupiedHistory> findFirstByLocationOrderByEndDesc(DeskLocation location);
 
 }

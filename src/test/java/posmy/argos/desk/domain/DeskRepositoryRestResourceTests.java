@@ -2,6 +2,7 @@ package posmy.argos.desk.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +13,8 @@ import posmy.argos.desk.history.domain.DeskOccupiedHistory;
 import posmy.argos.desk.history.domain.DeskOccupiedHistoryRepository;
 import posmy.argos.security.azure.WithAzureADUser;
 
+import static java.time.Instant.now;
+import static java.time.temporal.ChronoUnit.HOURS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -58,6 +61,7 @@ class DeskRepositoryRestResourceTests {
     }
 
     @Test
+    @DisplayName("History record will be created when a Desk is OCCUPIED")
     void occupy() throws Exception {
         var location = new DeskLocation().row("D").column(12);
 
@@ -79,5 +83,36 @@ class DeskRepositoryRestResourceTests {
 
         assertThat(history)
                 .isNotEmpty();
+    }
+
+    @Test
+    @DisplayName("History end time will be updated to earlier if when user manually check out")
+    void manualCheckout() throws Exception {
+        var location = new DeskLocation().row("D").column(12);
+
+        var desk = repository.save(
+                new Desk().location(location).area(DATA_AND_TECHNOLOGY).status(OCCUPIED)
+        );
+
+        var history = historyRepository.save(
+                new DeskOccupiedHistory().location(location).since(now()).end(now().plus(9, HOURS))
+        );
+
+        var content = new ObjectMapper().writeValueAsString(desk.status(VACANT));
+
+        mvc.perform(
+                put("/desks/{id}", desk.id())
+                        .accept(HAL_JSON)
+                        .content(content)
+                        .contentType(APPLICATION_JSON)
+        );
+
+        var updatedHistory = historyRepository.findOne(Example.of(new DeskOccupiedHistory().location(location)));
+
+        assertThat(updatedHistory)
+                .get()
+                .satisfies(persisted ->
+                        assertThat(persisted.end()).isBefore(history.end())
+                );
     }
 }

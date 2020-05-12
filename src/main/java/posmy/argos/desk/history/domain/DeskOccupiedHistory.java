@@ -1,31 +1,31 @@
-package posmy.argos.desk.domain;
+package posmy.argos.desk.history.domain;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import posmy.argos.desk.domain.DeskLocation;
+
+import java.time.Instant;
 
 /**
  * @author Rashidi Zin
  */
 @Document
-@Data
 @Accessors(fluent = true)
-@Setter(onMethod = @__(@JsonSetter))
-@Getter(onMethod = @__(@JsonGetter))
-public class Desk {
+@Getter @Setter
+public class DeskOccupiedHistory {
 
     @Id
     private String id;
 
-    private DeskArea area;
-
     private DeskLocation location;
 
-    private DeskStatus status;
+    private String occupant;
+
+    private Instant since;
+
+    private Instant end;
 
 }

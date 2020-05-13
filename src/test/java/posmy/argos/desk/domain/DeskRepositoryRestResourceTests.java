@@ -1,6 +1,7 @@
 package posmy.argos.desk.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -155,4 +156,10 @@ class DeskRepositoryRestResourceTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.[0].message", is("desk.location already exist")));
     }
+
+    @AfterEach
+    void cleanup() {
+        repository.deleteAll();
+    }
+
 }

@@ -1,6 +1,7 @@
 package posmy.argos.desk.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -134,4 +135,31 @@ class DeskRepositoryRestResourceTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status", is(VACANT.name())));
     }
+
+    @Test
+    @DisplayName("Only one location can exist per entry")
+    void createWithExistingLocation() throws Exception {
+        var location = new DeskLocation().row("D").column(12);
+
+        repository.save(new Desk().location(location).area(DATA_AND_TECHNOLOGY));
+
+        var content = new ObjectMapper().writeValueAsString(
+                new Desk().location(location).area(DATA_AND_TECHNOLOGY)
+        );
+
+        mvc.perform(
+                post("/desks")
+                        .accept(HAL_JSON)
+                        .content(content)
+                        .contentType(APPLICATION_JSON)
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.[0].message", is("desk.location already exist")));
+    }
+
+    @AfterEach
+    void cleanup() {
+        repository.deleteAll();
+    }
+
 }

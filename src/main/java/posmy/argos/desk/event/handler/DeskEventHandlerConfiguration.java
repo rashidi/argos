@@ -10,6 +10,11 @@ import posmy.argos.desk.history.domain.DeskOccupiedHistoryRepository;
 @Configuration
 public class DeskEventHandlerConfiguration {
 
+    @Bean("deskBeforeCreateEventHandler")
+    public DeskBeforeCreateEventHandler beforeCreate() {
+        return new DeskBeforeCreateEventHandler();
+    }
+
     @Bean("deskAfterSaveEventHandler")
     public DeskAfterSaveEventHandler afterSave(DeskOccupiedHistoryRepository historyRepository) {
         return new DeskAfterSaveEventHandler(historyRepository);

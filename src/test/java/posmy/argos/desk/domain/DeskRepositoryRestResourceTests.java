@@ -16,11 +16,12 @@ import posmy.argos.security.azure.WithAzureADUser;
 import static java.time.Instant.now;
 import static java.time.temporal.ChronoUnit.HOURS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 import static posmy.argos.desk.domain.DeskArea.DATA_AND_TECHNOLOGY;
@@ -114,5 +115,23 @@ class DeskRepositoryRestResourceTests {
                 .satisfies(persisted ->
                         assertThat(persisted.end()).isBefore(history.end())
                 );
+    }
+
+    @Test
+    @DisplayName("Upon creation, Desk status will be VACANT")
+    void assertInitialStatus() throws Exception {
+        var location = new DeskLocation().row("D").column(12);
+        var desk = new Desk().location(location).area(DATA_AND_TECHNOLOGY);
+
+        var content = new ObjectMapper().writeValueAsString(desk);
+
+        mvc.perform(
+                post("/desks")
+                        .accept(HAL_JSON)
+                        .content(content)
+                        .contentType(APPLICATION_JSON)
+        )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status", is(VACANT.name())));
     }
 }

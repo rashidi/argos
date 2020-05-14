@@ -3,6 +3,8 @@ package posmy.argos.desk.validator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -11,6 +13,7 @@ import org.springframework.data.rest.core.ValidationErrors;
 import posmy.argos.desk.domain.Desk;
 import posmy.argos.desk.domain.DeskLocation;
 import posmy.argos.desk.domain.DeskRepository;
+import posmy.argos.desk.junit.arguments.InvalidLocationsArgumentProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -82,4 +85,43 @@ class BeforeCreateDeskValidatorTests {
 
         verify(errors, never()).rejectValue(anyString(), anyString(), anyString());
     }
+
+    @ParameterizedTest
+    @ArgumentsSource(InvalidLocationsArgumentProvider.class)
+    @DisplayName("location and its content are required")
+    void invalidLocations() {
+        var desk = new Desk().area(DATA_AND_TECHNOLOGY);
+
+        ValidationErrors errors = mock(ValidationErrors.class);
+
+        validator.validate(desk, errors);
+
+        ArgumentCaptor<String> errorsCaptor = ArgumentCaptor.forClass(String.class);
+
+        verify(errors).rejectValue(errorsCaptor.capture(), errorsCaptor.capture(), errorsCaptor.capture());
+
+        var errorsContent = errorsCaptor.getAllValues();
+
+        assertThat(errorsContent).contains("location", "location.missing", "desk.location is required");
+    }
+
+    @Test
+    @DisplayName("area cannot be null")
+    void areaIsNull() {
+        var location = new DeskLocation().row("D").column(12);
+        var desk = new Desk().location(location);
+
+        ValidationErrors errors = mock(ValidationErrors.class);
+
+        validator.validate(desk, errors);
+
+        ArgumentCaptor<String> errorsCaptor = ArgumentCaptor.forClass(String.class);
+
+        verify(errors).rejectValue(errorsCaptor.capture(), errorsCaptor.capture(), errorsCaptor.capture());
+
+        var errorsContent = errorsCaptor.getAllValues();
+
+        assertThat(errorsContent).contains("area", "area.missing", "desk.area is required");
+    }
+
 }

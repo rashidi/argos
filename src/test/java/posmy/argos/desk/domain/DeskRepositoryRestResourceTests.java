@@ -5,6 +5,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
@@ -12,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import posmy.argos.desk.history.domain.DeskOccupiedHistory;
 import posmy.argos.desk.history.domain.DeskOccupiedHistoryRepository;
+import posmy.argos.desk.junit.arguments.InvalidLocationsArgumentProvider;
 import posmy.argos.security.azure.WithAzureADUser;
 
 import static java.time.Instant.now;
@@ -155,6 +158,39 @@ class DeskRepositoryRestResourceTests {
         )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.[0].message", is("desk.location already exist")));
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(InvalidLocationsArgumentProvider.class)
+    void createWithInvalidLocation(Desk desk) throws Exception {
+        var content = new ObjectMapper().writeValueAsString(desk);
+
+        mvc.perform(
+                post("/desks")
+                .accept(HAL_JSON)
+                .content(content)
+                .contentType(APPLICATION_JSON)
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.[0].message", is("desk.location is required")));
+    }
+
+    @Test
+    @DisplayName("area cannot be null")
+    void createWithMissingArea() throws Exception {
+        var content = new ObjectMapper().writeValueAsString(
+                new Desk()
+                        .location(new DeskLocation().row("D").column(12))
+        );
+
+        mvc.perform(
+                post("/desks")
+                        .accept(HAL_JSON)
+                        .content(content)
+                        .contentType(APPLICATION_JSON)
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.[0].message", is("desk.area is required")));
     }
 
     @AfterEach

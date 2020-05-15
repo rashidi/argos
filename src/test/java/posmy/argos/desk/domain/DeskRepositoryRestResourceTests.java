@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 import static posmy.argos.desk.domain.DeskArea.DATA_AND_TECHNOLOGY;
 import static posmy.argos.desk.domain.DeskStatus.OCCUPIED;
 import static posmy.argos.desk.domain.DeskStatus.VACANT;
+import static posmy.argos.desk.helper.DeskTestHelper.create;
 
 /**
  * @author Rashidi Zin
@@ -191,6 +192,23 @@ class DeskRepositoryRestResourceTests {
         )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.[0].message", is("desk.area is required")));
+    }
+
+    @Test
+    @DisplayName("OCCUPIED Desk cannot be occupied again")
+    void occupyOccupiedDesk() throws Exception {
+        var persisted = repository.save(create().status(OCCUPIED));
+
+        var content = new ObjectMapper().writeValueAsBytes(persisted);
+
+        mvc.perform(
+                put("/desks/{id}", persisted.id())
+                        .accept(HAL_JSON)
+                        .content(content)
+                        .contentType(APPLICATION_JSON)
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.[0].message", is("desk.location is not available")));
     }
 
     @AfterEach

@@ -2,7 +2,7 @@ package posmy.argos.desk.domain;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 /**
  * @author Rashidi Zin
  */
-@Data
+@EqualsAndHashCode
 @Accessors(fluent = true)
 @Setter(onMethod = @__(@JsonSetter))
 @Getter(onMethod = @__(@JsonGetter))

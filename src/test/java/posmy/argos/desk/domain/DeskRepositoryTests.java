@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.domain.Example;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Index.atIndex;
@@ -12,6 +13,7 @@ import static posmy.argos.desk.domain.DeskArea.COLLABORATION;
 import static posmy.argos.desk.domain.DeskArea.DATA_AND_TECHNOLOGY;
 import static posmy.argos.desk.domain.DeskStatus.OCCUPIED;
 import static posmy.argos.desk.domain.DeskStatus.VACANT;
+import static posmy.argos.desk.helper.DeskTestHelper.create;
 
 /**
  * @author Rashidi Zin
@@ -69,6 +71,31 @@ class DeskRepositoryTests {
                 .isNotEmpty()
                 .get()
                 .isEqualTo(persisted);
+    }
+
+    @Test
+    void existsByLocationAndStatus() {
+        var persisted = repository.save(create().status(OCCUPIED));
+
+        assertThat(
+                repository.exists(Example.of(new Desk().location(persisted.location()).status(OCCUPIED)))
+        )
+                .isTrue();
+
+        assertThat(
+                repository.exists(Example.of(new Desk().location(persisted.location()).status(VACANT)))
+        )
+                .isFalse();
+
+        assertThat(
+                repository.exists(Example.of(new Desk().location(new DeskLocation().row("UB").column(40)).status(OCCUPIED)))
+        )
+                .isFalse();
+
+        assertThat(
+                repository.exists(Example.of(new Desk().location(new DeskLocation().row("UB").column(40)).status(VACANT)))
+        )
+                .isFalse();
     }
 
     @AfterEach

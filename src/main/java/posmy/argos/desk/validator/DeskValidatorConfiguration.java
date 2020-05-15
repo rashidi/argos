@@ -24,6 +24,7 @@ public class DeskValidatorConfiguration {
             @Override
             public void configureValidatingRepositoryEventListener(ValidatingRepositoryEventListener listener) {
                 listener.addValidator("beforeCreate", new BeforeCreateDeskValidator(repository));
+                listener.addValidator("beforeSave", new BeforeSaveDeskValidator(repository));
             }
 
         };

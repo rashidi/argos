@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+import posmy.argos.desk.helper.DeskTestHelper;
 import posmy.argos.desk.history.domain.DeskOccupiedHistory;
 import posmy.argos.desk.history.domain.DeskOccupiedHistoryRepository;
 import posmy.argos.desk.junit.arguments.InvalidLocationsArgumentProvider;
@@ -67,12 +68,10 @@ class DeskRepositoryRestResourceTests {
     }
 
     @Test
-    @DisplayName("History record will be created when a Desk is OCCUPIED")
+    @DisplayName("Desk occupant will be updated and history record will be created when a Desk is OCCUPIED")
     void occupy() throws Exception {
-        var location = new DeskLocation().row("D").column(12);
-
         var desk = repository.save(
-                new Desk().location(location).area(DATA_AND_TECHNOLOGY).status(VACANT)
+                DeskTestHelper.create().status(VACANT)
         );
 
         var content = new ObjectMapper().writeValueAsString(desk.status(OCCUPIED));
@@ -85,7 +84,11 @@ class DeskRepositoryRestResourceTests {
         )
                 .andExpect(status().isOk());
 
-        var history = historyRepository.findOne(Example.of(new DeskOccupiedHistory().location(location)));
+        var persisted = repository.findById(desk.id());
+
+        assertThat(persisted).isNotEmpty().get().extracting(Desk::occupant).isEqualTo("rashidi");
+
+        var history = historyRepository.findOne(Example.of(new DeskOccupiedHistory().location(desk.location())));
 
         assertThat(history)
                 .isNotEmpty();
@@ -209,6 +212,26 @@ class DeskRepositoryRestResourceTests {
         )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.[0].message", is("desk.location is not available")));
+    }
+
+    @Test
+    @DisplayName("Active occupant is not allowed to occupy another Desk")
+    void occupyDeskByActiveOccupant() throws Exception {
+
+        repository.save(create().status(OCCUPIED).occupant("rashidi"));
+
+        var vacantDesk = repository.save(create().location(new DeskLocation().row("UB").column(40)).status(VACANT));
+
+        var content = new ObjectMapper().writeValueAsBytes(vacantDesk.status(OCCUPIED));
+
+        mvc.perform(
+                put("/desks/{id}", vacantDesk.id())
+                        .accept(HAL_JSON)
+                        .content(content)
+                        .contentType(APPLICATION_JSON)
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.[0].message", is("desk.occupant is active")));
     }
 
     @AfterEach

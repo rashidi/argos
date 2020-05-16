@@ -15,6 +15,11 @@ public class DeskEventHandlerConfiguration {
         return new DeskBeforeCreateEventHandler();
     }
 
+    @Bean("deskBeforeSaveEventHandler")
+    public DeskBeforeSaveEventHandler beforeSave() {
+        return new DeskBeforeSaveEventHandler();
+    }
+
     @Bean("deskAfterSaveEventHandler")
     public DeskAfterSaveEventHandler afterSave(DeskOccupiedHistoryRepository historyRepository) {
         return new DeskAfterSaveEventHandler(historyRepository);

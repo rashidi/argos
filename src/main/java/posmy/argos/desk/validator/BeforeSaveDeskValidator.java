@@ -5,10 +5,12 @@ import org.springframework.data.domain.Example;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import posmy.argos.desk.domain.Desk;
+import posmy.argos.desk.domain.DeskLocation;
 import posmy.argos.desk.domain.DeskRepository;
-import posmy.argos.desk.domain.DeskStatus;
 
 import static posmy.argos.desk.domain.DeskStatus.OCCUPIED;
+import static posmy.argos.desk.domain.DeskStatus.VACANT;
+import static posmy.argos.security.SecurityHelper.getLoggedInUsername;
 
 /**
  * @author Rashidi Zin
@@ -28,18 +30,34 @@ public class BeforeSaveDeskValidator implements Validator {
         var desk = (Desk) target;
         var status = desk.status();
 
-        if (DeskStatus.VACANT == status)
+        if (VACANT == status)
             return;
 
-        var location = desk.location();
+        boolean isActiveOccupant = isActiveOccupant();
 
-        Example<Desk> occupiedByLocation = Example.of(new Desk().location(location).status(OCCUPIED));
+        if (isActiveOccupant) {
+            errors.rejectValue("occupant", "occupant.active", "desk.occupant is active");
+        }
 
-        boolean isOccupied = repository.exists(occupiedByLocation);
+        boolean isOccupied = isOccupied(desk.location());
 
         if (isOccupied) {
             errors.rejectValue("location", "location.occupied", "desk.location is not available");
         }
 
+    }
+
+    private boolean isActiveOccupant() {
+        var username = getLoggedInUsername();
+
+        Example<Desk> byOccupant = Example.of(new Desk().status(OCCUPIED).occupant(username));
+
+        return repository.exists(byOccupant);
+    }
+
+    private boolean isOccupied(DeskLocation location) {
+        Example<Desk> occupiedByLocation = Example.of(new Desk().location(location).status(OCCUPIED));
+
+        return repository.exists(occupiedByLocation);
     }
 }

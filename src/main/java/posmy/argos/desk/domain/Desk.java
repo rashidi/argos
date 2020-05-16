@@ -25,10 +25,10 @@ public class Desk {
     @EqualsAndHashCode.Exclude
     private DeskArea area;
 
-    @EqualsAndHashCode.Exclude
     private DeskLocation location;
 
-    @EqualsAndHashCode.Exclude
     private DeskStatus status;
+
+    private String occupant;
 
 }

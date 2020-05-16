@@ -31,4 +31,7 @@ public class Desk {
     @EqualsAndHashCode.Exclude
     private DeskStatus status;
 
+    @EqualsAndHashCode.Exclude
+    private String occupant;
+
 }

@@ -1,10 +1,8 @@
 package posmy.argos.desk.event.handler;
 
-import com.microsoft.azure.spring.autoconfigure.aad.UserPrincipal;
 import lombok.AllArgsConstructor;
 import org.springframework.data.rest.core.annotation.HandleAfterSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
-import org.springframework.security.core.context.SecurityContextHolder;
 import posmy.argos.desk.domain.Desk;
 import posmy.argos.desk.domain.DeskStatus;
 import posmy.argos.desk.history.domain.DeskOccupiedHistory;
@@ -14,6 +12,7 @@ import java.util.function.Consumer;
 
 import static java.time.Instant.now;
 import static java.time.temporal.ChronoUnit.HOURS;
+import static posmy.argos.security.SecurityHelper.getLoggedInUsername;
 
 /**
  * @author Rashidi Zin
@@ -58,12 +57,6 @@ public class DeskAfterSaveEventHandler {
         historyRepository
                 .findFirstByLocationOrderByEndDesc(location)
                 .ifPresent(updateEndTime);
-    }
-
-    private String getLoggedInUsername() {
-        var principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        return principal.getName();
     }
 
 }

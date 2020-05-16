@@ -98,6 +98,31 @@ class DeskRepositoryTests {
                 .isFalse();
     }
 
+    @Test
+    void activeByOccupant() {
+        var desk = repository.save(create().status(OCCUPIED).occupant("rashidi"));
+
+        assertThat(
+                repository.exists(Example.of(new Desk().status(OCCUPIED).occupant(desk.occupant())))
+        )
+                .isTrue();
+
+        assertThat(
+                repository.exists(Example.of(new Desk().status(OCCUPIED).occupant("liam")))
+        )
+                .isFalse();
+
+        assertThat(
+                repository.exists(Example.of(new Desk().status(VACANT).occupant(desk.occupant())))
+        )
+                .isFalse();
+
+        assertThat(
+                repository.exists(Example.of(new Desk().status(VACANT).occupant("liam")))
+        )
+                .isFalse();
+    }
+
     @AfterEach
     void deleteAll() {
         repository.deleteAll();

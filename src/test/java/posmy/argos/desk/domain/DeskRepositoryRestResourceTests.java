@@ -214,6 +214,26 @@ class DeskRepositoryRestResourceTests {
                 .andExpect(jsonPath("$.errors.[0].message", is("desk.location is not available")));
     }
 
+    @Test
+    @DisplayName("Active occupant is not allowed to occupy another Desk")
+    void occupyDeskByActiveOccupant() throws Exception {
+
+        repository.save(create().status(OCCUPIED).occupant("rashidi"));
+
+        var vacantDesk = repository.save(create().location(new DeskLocation().row("UB").column(40)).status(VACANT));
+
+        var content = new ObjectMapper().writeValueAsBytes(vacantDesk.status(OCCUPIED));
+
+        mvc.perform(
+                put("/desks/{id}", vacantDesk.id())
+                        .accept(HAL_JSON)
+                        .content(content)
+                        .contentType(APPLICATION_JSON)
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.[0].message", is("desk.occupant is active")));
+    }
+
     @AfterEach
     void cleanup() {
         repository.deleteAll();

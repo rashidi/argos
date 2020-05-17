@@ -14,17 +14,10 @@ public class DeskProperties {
 
     Period period;
 
+    @Value
     public static class Period {
 
-        private final Integer maxHour;
-
-        public Period(Integer maxHour) {
-            this.maxHour = maxHour;
-        }
-
-        public Integer getMaxHour() {
-            return maxHour;
-        }
+        Integer maxHour;
 
     }
 

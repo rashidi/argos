@@ -36,7 +36,7 @@ import static posmy.argos.desk.helper.DeskTestHelper.create;
 /**
  * @author Rashidi Zin
  */
-@SpringBootTest
+@SpringBootTest(properties = "argos.desk.period.max-hour=2")
 @WithAzureADUser
 class DeskRepositoryRestResourceTests {
 

@@ -10,6 +10,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import posmy.argos.desk.context.DeskProperties;
+import posmy.argos.desk.context.DeskProperties.Period;
 import posmy.argos.desk.domain.Desk;
 import posmy.argos.desk.domain.DeskLocation;
 import posmy.argos.desk.history.domain.DeskOccupiedHistory;
@@ -34,7 +36,9 @@ class DeskAfterSaveEventHandlerTests {
 
     private final DeskOccupiedHistoryRepository historyRepository = mock(DeskOccupiedHistoryRepository.class);
 
-    private final DeskAfterSaveEventHandler handler = new DeskAfterSaveEventHandler(historyRepository);
+    private final DeskProperties properties = new DeskProperties(new Period(9));;
+
+    private final DeskAfterSaveEventHandler handler = new DeskAfterSaveEventHandler(historyRepository, properties);
 
     @BeforeAll
     static void registerUserContext() {

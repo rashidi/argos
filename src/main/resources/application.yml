@@ -1,3 +1,8 @@
+argos:
+  desk:
+    period:
+      max-hour: 9
+
 azure:
   activedirectory:
     session-stateless: true

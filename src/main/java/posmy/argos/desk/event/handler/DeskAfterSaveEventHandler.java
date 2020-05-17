@@ -3,6 +3,7 @@ package posmy.argos.desk.event.handler;
 import lombok.AllArgsConstructor;
 import org.springframework.data.rest.core.annotation.HandleAfterSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+import posmy.argos.desk.context.DeskProperties;
 import posmy.argos.desk.domain.Desk;
 import posmy.argos.desk.domain.DeskStatus;
 import posmy.argos.desk.history.domain.DeskOccupiedHistory;
@@ -23,6 +24,8 @@ public class DeskAfterSaveEventHandler {
 
     private final DeskOccupiedHistoryRepository historyRepository;
 
+    private final DeskProperties properties;
+
     @HandleAfterSave
     void createHistoryInformation(Desk source) {
 
@@ -33,7 +36,7 @@ public class DeskAfterSaveEventHandler {
         var location = source.location();
         var occupant = getLoggedInUsername();
         var since = now();
-        var end = since.plus(9, HOURS);
+        var end = since.plus(properties.getPeriod().getMaxHour(), HOURS);
 
         var history = new DeskOccupiedHistory().location(location).occupant(occupant).since(since).end(end);
 

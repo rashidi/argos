@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "argos.desk.period.max-hour",
+      "type": "java.lang.String",
+      "description": "Number of hour to be allocated when desk is occupied."
+    }
+  ]
+}

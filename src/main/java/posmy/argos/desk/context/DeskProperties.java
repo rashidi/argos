@@ -1,6 +1,7 @@
 package posmy.argos.desk.context;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
@@ -9,12 +10,14 @@ import org.springframework.boot.context.properties.ConstructorBinding;
  */
 @ConstructorBinding
 @ConfigurationProperties("argos.desk")
-@Value
+@AllArgsConstructor
+@Getter
 public class DeskProperties {
 
     Period period;
 
-    @Value
+    @AllArgsConstructor
+    @Getter
     public static class Period {
 
         Integer maxHour;

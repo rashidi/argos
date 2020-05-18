@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build Artifact
+    name: Generate Reports
     runs-on: ubuntu-latest
 
     steps:
@@ -23,8 +23,19 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+      
+    - name: Generate test coverage data
+      run: ./gradlew build jacocoTestReport      
 
-    - name: Execute Sonarqube task
-      run: ./gradlew jacocoTestReport sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
+    - name: Generate Sonarqube report
+      run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Generate Codecov report
+      uses: codecov/codecov-action@v1.0.7
+      with:
+        # User defined upload name. Visible in Codecov UI
+        name: Argos
+        # Specify whether or not CI build should fail if Codecov runs into an error during upload
+        fail_ci_if_error: true

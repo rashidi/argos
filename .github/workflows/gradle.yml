@@ -28,15 +28,4 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew build 
-
-    - name: Generate Coverage Report
-      run: ./gradlew jacocoTestReport
-        
-    - name: Codecov
-      uses: codecov/codecov-action@v1.0.7
-      with:
-        # User defined upload name. Visible in Codecov UI
-        name: CodeCov
-        # Specify whether or not CI build should fail if Codecov runs into an error during upload
-        fail_ci_if_error: true
+      run: ./gradlew build

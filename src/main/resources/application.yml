@@ -1,7 +1,6 @@
 argos:
   desk:
-    period:
-      max-hour: 9
+    max-duration: 9H
 
 azure:
   activedirectory:

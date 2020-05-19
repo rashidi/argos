@@ -1,9 +1,10 @@
 {
   "properties": [
     {
-      "name": "argos.desk.period.max-hour",
+      "name": "argos.desk.max-duration",
       "type": "java.lang.String",
-      "description": "Number of hour to be allocated when desk is occupied."
+      "description": "Default length of duration allowed for a desk to be occupied.",
+      "defaultValue": "9H"
     }
   ]
 }

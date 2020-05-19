@@ -5,23 +5,17 @@ import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
+import java.time.Duration;
+
 /**
  * @author Rashidi Zin
  */
 @ConstructorBinding
 @ConfigurationProperties("argos.desk")
 @AllArgsConstructor
-@Getter
 public class DeskProperties {
 
-    Period period;
-
-    @AllArgsConstructor
     @Getter
-    public static class Period {
-
-        Integer maxHour;
-
-    }
+    private final Duration maxDuration;
 
 }

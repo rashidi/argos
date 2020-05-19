@@ -36,7 +36,7 @@ public class DeskAfterSaveEventHandler {
         var location = source.location();
         var occupant = getLoggedInUsername();
         var since = now();
-        var end = since.plus(properties.getPeriod().getMaxHour(), HOURS);
+        var end = since.plus(properties.getMaxDuration().toHours(), HOURS);
 
         var history = new DeskOccupiedHistory().location(location).occupant(occupant).since(since).end(end);
 

@@ -19,6 +19,7 @@ build/
 *.iws
 *.iml
 *.ipr
+local.properties
 out/
 
 ### NetBeans ###
@@ -30,6 +31,7 @@ out/
 
 ### VS Code ###
 .vscode/
+bin/
 
 ### Github ###
 .github

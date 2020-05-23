@@ -5,6 +5,12 @@
       "type": "java.lang.String",
       "description": "Default length of duration allowed for a desk to be occupied.",
       "defaultValue": "9H"
+    },
+    {
+      "name": "argos.desk.scheduler-delay",
+      "type": "java.lang.Long",
+      "description": "Delay duration between previous task and next task in miliseconds.",
+      "defaultValue": "120000"
     }
   ]
 }

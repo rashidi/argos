@@ -34,7 +34,7 @@ import static org.mockito.Mockito.verify;
  * @author Rashidi Zin
  */
 @ExtendWith(MockitoExtension.class)
-public class DeskSchedulerServiceTests {
+class DeskSchedulerServiceTests {
 
     private final DeskRepository repository = mock(DeskRepository.class);
 

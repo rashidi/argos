@@ -27,7 +27,7 @@ import static org.awaitility.Awaitility.await;
  */
 @SpringBootTest
 @TestPropertySource(properties = { "argos.desk.max-duration=1M", "argos.desk.scheduler-delay=10000" })
-public class DeskSchedulerIntegrationTests {
+class DeskSchedulerIntegrationTests {
 
     @Autowired
     private DeskRepository repository;

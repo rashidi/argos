@@ -33,7 +33,7 @@ public class DeskSchedulerService {
      * Find list of Desks that are marked as OCCUPIED but no longer being occupied.
      */
     @Transactional(readOnly = true)
-    protected Stream<Desk> findInactiveOccupiedDesks() {
+    public Stream<Desk> findInactiveOccupiedDesks() {
         var withStatusOccupied = Example.of(new Desk().status(OCCUPIED));
         
         var occupiedDesks = repository.findAll(withStatusOccupied);

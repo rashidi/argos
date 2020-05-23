@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @Configuration
 @EnableScheduling
-public class SchedulerConfiguration {
+public class DeskSchedulerConfiguration {
     
     @Bean("updateDeskStatusScheduler")
     public UpdateDeskStatusScheduler updateStatus(DeskRepository repository, DeskSchedulerService service) {

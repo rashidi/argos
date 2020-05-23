@@ -1,7 +1,7 @@
 argos:
   desk:
     max-duration: 9H
-    scheduler-delay: 1200
+    scheduler-delay: 120000
 
 azure:
   activedirectory:

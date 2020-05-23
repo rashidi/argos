@@ -5,7 +5,6 @@ import posmy.argos.desk.domain.DeskRepository;
 import posmy.argos.desk.history.domain.DeskOccupiedHistoryRepository;
 
 import java.util.ArrayList;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.springframework.data.domain.Example;

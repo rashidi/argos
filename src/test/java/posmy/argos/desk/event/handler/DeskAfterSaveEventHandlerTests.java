@@ -1,15 +1,5 @@
 package posmy.argos.desk.event.handler;
 
-import com.microsoft.azure.spring.autoconfigure.aad.UserPrincipal;
-import com.nimbusds.jwt.JWTClaimsSet;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import posmy.argos.desk.context.DeskProperties;
 import posmy.argos.desk.domain.Desk;
 import posmy.argos.desk.domain.DeskLocation;
@@ -20,13 +10,31 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.Instant.now;
-import static java.time.temporal.ChronoUnit.HOURS;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import com.microsoft.azure.spring.autoconfigure.aad.UserPrincipal;
+import com.nimbusds.jwt.JWTClaimsSet;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+
 import static posmy.argos.desk.domain.DeskArea.DATA_AND_TECHNOLOGY;
 import static posmy.argos.desk.domain.DeskStatus.OCCUPIED;
 import static posmy.argos.desk.domain.DeskStatus.VACANT;
+
+import static java.time.Instant.now;
+import static java.time.temporal.ChronoUnit.HOURS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author Rashidi Zin
@@ -36,7 +44,7 @@ class DeskAfterSaveEventHandlerTests {
 
     private final DeskOccupiedHistoryRepository historyRepository = mock(DeskOccupiedHistoryRepository.class);
 
-    private final DeskProperties properties = new DeskProperties(Duration.ofHours(9));
+    private final DeskProperties properties = new DeskProperties(Duration.ofHours(9), MINUTES.toMillis(2));
 
     private final DeskAfterSaveEventHandler handler = new DeskAfterSaveEventHandler(historyRepository, properties);
 

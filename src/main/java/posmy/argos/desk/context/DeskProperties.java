@@ -1,11 +1,12 @@
 package posmy.argos.desk.context;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import java.time.Duration;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
-import java.time.Duration;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * @author Rashidi Zin
@@ -17,5 +18,8 @@ public class DeskProperties {
 
     @Getter
     private final Duration maxDuration;
+
+    @Getter
+    private final Long schedulerDelay;
 
 }

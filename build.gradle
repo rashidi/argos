@@ -36,6 +36,7 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
+    testImplementation('org.awaitility:awaitility')
     testImplementation('org.springframework.security:spring-security-test')
     testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
 }
@@ -44,6 +45,7 @@ dependencyManagement {
     imports {
         mavenBom "com.microsoft.azure:azure-spring-boot-bom:${azureVersion}"
     }
+
 }
 
 test {

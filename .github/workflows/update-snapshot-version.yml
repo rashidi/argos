@@ -1,0 +1,28 @@
+name: Update SNAPSHOT Version
+on: 
+  milestone:
+    types: [created, opened, edited]
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: checkout
+        uses: actions/checkout@master
+        
+      - name: Update release SNAPSHOT version 
+        run: |
+          echo version=${{ github.event.milestone.title }} > gradle.properties
+          
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local name "Github Action"
+          git add gradle.properties
+          git commit -m "Bump project version to ${{ github.event.milestone.title }}"
+          
+      - name: Push changes    # push the output folder to your repo
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -18,7 +18,7 @@ jobs:
       - name: Commit changes
         run: |
           git config --local user.email "action@github.com"
-          git config --local name "Github Action"
+          git config --local user.name "Github Action"
           git add gradle.properties
           git commit -m "Bump project version to ${{ github.event.milestone.title }}"
           

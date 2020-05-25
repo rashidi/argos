@@ -25,7 +25,7 @@ jobs:
       run: chmod +x gradlew
       
     - name: Generate test coverage data
-      run: ./gradlew build jacocoTestReport      
+      run: ./gradlew -Pversion=20.2.0-SNAPSHOT build jacocoTestReport      
 
     - name: Generate Sonarqube report
       run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30

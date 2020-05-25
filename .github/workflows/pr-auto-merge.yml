@@ -1,6 +1,5 @@
 name: PR Auto Merge
 on:
-  push:
   pull_request:
     branches: 
       - 'snapshot-**'

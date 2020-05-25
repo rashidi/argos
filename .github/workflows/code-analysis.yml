@@ -25,10 +25,10 @@ jobs:
       run: chmod +x gradlew
       
     - name: Generate test coverage data
-      run: ./gradlew -Pversion=20.2.0-SNAPSHOT build jacocoTestReport      
+      run: ./gradlew build jacocoTestReport      
 
     - name: Generate Sonarqube report
-      run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
+      run: ./gradlew -Pversion=20.2.0-SNAPSHOT sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         

@@ -1,4 +1,7 @@
-on: pull_request
+on: 
+  pull_request:
+    branches-ignore: 'snapshot-**'
+    
 name: Pull Request Status Checks
 jobs:
   pRStatusGiphy:

@@ -1,10 +1,6 @@
 name: Code Analysis
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: push
 
 jobs:
   build:
@@ -25,17 +21,9 @@ jobs:
       run: chmod +x gradlew
       
     - name: Generate test coverage data
-      run: ./gradlew -Pversion=20.2.0-SNAPSHOT build jacocoTestReport      
+      run: ./gradlew build jacocoTestReport      
 
     - name: Generate Sonarqube report
-      run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
+      run: ./gradlew -Pversion=20.2.0-SNAPSHOT sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.dbcleaner.daysBeforeDeletingInactiveShortLivingBranches=30
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Generate Codecov report
-      uses: codecov/codecov-action@v1.0.7
-      with:
-        # User defined upload name. Visible in Codecov UI
-        name: Argos
-        # Specify whether or not CI build should fail if Codecov runs into an error during upload
-        fail_ci_if_error: true

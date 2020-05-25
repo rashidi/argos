@@ -27,8 +27,6 @@ jobs:
               
               [1]: https://github.com/peter-evans/create-pull-request
           labels: automated
-          reviewers: rashidi
-          milestone: ${{ github.event.milestone.title }}
           branch: snapshot-${{ github.event.milestone.title }}
 
       - name: Check outputs

@@ -1,10 +1,7 @@
 name: Update SNAPSHOT Version
 on: 
   milestone:
-    tpes:
-      - created
-      - opened
-      - edited
+    types: [created, opened, edited]
 
 jobs:
   update-version:

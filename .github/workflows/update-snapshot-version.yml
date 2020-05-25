@@ -13,7 +13,7 @@ jobs:
         
       - name: Update release SNAPSHOT version 
         run: |
-          echo version=${{ github.event.milestone.title }} > gradle.properties
+          echo version=${{ github.event.milestone.title }}-SNAPSHOT > gradle.properties
           
       - name: Commit changes
         run: |

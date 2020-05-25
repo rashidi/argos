@@ -7,3 +7,8 @@ azure:
   activedirectory:
     session-stateless: true
     client-id:
+
+spring:
+  data:
+    rest:
+      base-path: /api

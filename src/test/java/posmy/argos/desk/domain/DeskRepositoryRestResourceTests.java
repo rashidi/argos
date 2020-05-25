@@ -61,7 +61,7 @@ class DeskRepositoryRestResourceTests {
     @Test
     void browse() throws Exception {
         mvc.perform(
-                get("/desks")
+                get("/api/desks")
         )
                 .andExpect(status().isOk());
     }
@@ -74,7 +74,7 @@ class DeskRepositoryRestResourceTests {
         var content = new ObjectMapper().writeValueAsString(desk.status(OCCUPIED));
 
         mvc.perform(
-                put("/desks/{id}", desk.id())
+                put("/api/desks/{id}", desk.id())
                         .accept(HAL_JSON)
                         .content(content)
                         .contentType(APPLICATION_JSON)
@@ -104,7 +104,7 @@ class DeskRepositoryRestResourceTests {
         var content = new ObjectMapper().writeValueAsString(desk.status(VACANT));
 
         mvc.perform(
-                put("/desks/{id}", desk.id())
+                put("/api/desks/{id}", desk.id())
                         .accept(HAL_JSON)
                         .content(content)
                         .contentType(APPLICATION_JSON)
@@ -134,7 +134,7 @@ class DeskRepositoryRestResourceTests {
         var content = new ObjectMapper().writeValueAsString(desk);
 
         mvc.perform(
-                post("/desks")
+                post("/api/desks")
                         .accept(HAL_JSON)
                         .content(content)
                         .contentType(APPLICATION_JSON)
@@ -155,7 +155,7 @@ class DeskRepositoryRestResourceTests {
         );
 
         mvc.perform(
-                post("/desks")
+                post("/api/desks")
                         .accept(HAL_JSON)
                         .content(content)
                         .contentType(APPLICATION_JSON)
@@ -170,7 +170,7 @@ class DeskRepositoryRestResourceTests {
         var content = new ObjectMapper().writeValueAsString(desk);
 
         mvc.perform(
-                post("/desks")
+                post("/api/desks")
                 .accept(HAL_JSON)
                 .content(content)
                 .contentType(APPLICATION_JSON)
@@ -188,7 +188,7 @@ class DeskRepositoryRestResourceTests {
         );
 
         mvc.perform(
-                post("/desks")
+                post("/api/desks")
                         .accept(HAL_JSON)
                         .content(content)
                         .contentType(APPLICATION_JSON)
@@ -205,7 +205,7 @@ class DeskRepositoryRestResourceTests {
         var content = new ObjectMapper().writeValueAsBytes(persisted);
 
         mvc.perform(
-                put("/desks/{id}", persisted.id())
+                put("/api/desks/{id}", persisted.id())
                         .accept(HAL_JSON)
                         .content(content)
                         .contentType(APPLICATION_JSON)
@@ -225,7 +225,7 @@ class DeskRepositoryRestResourceTests {
         var content = new ObjectMapper().writeValueAsBytes(vacantDesk.status(OCCUPIED));
 
         mvc.perform(
-                put("/desks/{id}", vacantDesk.id())
+                put("/api/desks/{id}", vacantDesk.id())
                         .accept(HAL_JSON)
                         .content(content)
                         .contentType(APPLICATION_JSON)

@@ -1,8 +1,9 @@
 name: PR Auto Merge
 on:
   pull_request:
-    branches: 
-      - 'master'
+    types: 
+      - labeled
+      - opened
 
 jobs:
   auto-merge:

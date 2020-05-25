@@ -3,8 +3,12 @@ name: Code Analysis
 on:
   push:
     branches: [ master, '!snapshot-**' ]
+    paths: 
+      - 'src/**'
   pull_request:
     branches: [ master, '!snapshot-**' ]
+    paths: 
+      - 'src/**'
 
 jobs:
   build:

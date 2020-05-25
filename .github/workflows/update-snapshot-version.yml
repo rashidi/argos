@@ -20,10 +20,21 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "Github Action"
           git add gradle.properties
-          git commit -m "Bump project version to ${{ github.event.milestone.title }}"
+          git commit -m "Bump project version to ${{ github.event.milestone.title }}-SNAPSHOT"
           
-      - name: Push changes    # push the output folder to your repo
+      - name: Push changes
+        id: pushChanges
         uses: ad-m/github-push-action@master
         with:
           branch: snapshot-${{ github.event.milestone.title }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Create Pull request
+        id: cpr
+        uses: peter-evans/create-pull-request@v2
+        with:
+          token:  ${{ secrets.GITHUB_TOKEN }}
+          title: 'Bump project version to ${{ github.event.milestone.title }}-SNAPSHOT'
+          labels: automated
+          milestone: ${{ github.event.milestone.title }}
+          branch: snapshot-${{ github.event.milestone.title }}

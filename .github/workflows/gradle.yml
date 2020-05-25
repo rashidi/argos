@@ -6,9 +6,16 @@ name: Gradle Build
 on:
   push:
     branches: [ master, '!snapshot-**' ]
+    paths: 
+      - 'gradle/wrapper/**'
+      - 'build.gradle'
+      - 'src/**'
   pull_request:
     branches: [ master, '!snapshot-**' ]
-
+    paths: 
+      - 'gradle/wrapper/**'
+      - 'build.gradle'
+      - 'src/**'
 jobs:
   build:
     name: Build Artifact

@@ -54,7 +54,7 @@ class OAuthSecurityConfigurationTests {
 
         headers.add(AUTHORIZATION, "Bearer eyThI5isnOtaR3aLt0k3nUcANtrY2c0pYi7bu7ItwOn7W0rK");
 
-        var response = restTemplate.exchange("/", GET, new HttpEntity<>(headers), String.class);
+        var response = restTemplate.exchange("/api", GET, new HttpEntity<>(headers), String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(OK);
     }

@@ -2,9 +2,9 @@ name: Code Analysis
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, '!snapshot-**' ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, '!snapshot-**' ]
 
 jobs:
   build:

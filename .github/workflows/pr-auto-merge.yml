@@ -2,7 +2,7 @@ name: PR Auto Merge
 on:
   pull_request:
     branches: 
-      - 'snapshot-**'
+      - 'master'
 
 jobs:
   auto-merge:
@@ -15,7 +15,6 @@ jobs:
           MERGE_COMMIT_MESSAGE: "pull-request-title"
           MERGE_LABELS: "automated"
           MERGE_METHOD: "squash"
-          MERGE_DELETE_BRANCH: true
           MERGE_RETRIES: "10"
           MERGE_RETRY_SLEEP: "300000"
           UPDATE_METHOD: "rebase"

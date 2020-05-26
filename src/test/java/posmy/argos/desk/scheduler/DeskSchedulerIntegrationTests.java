@@ -1,6 +1,5 @@
 package posmy.argos.desk.scheduler;
 
-import posmy.argos.containers.mongodb.MongoDBTestContainerSetup;
 import posmy.argos.desk.context.DeskProperties;
 import posmy.argos.desk.domain.Desk;
 import posmy.argos.desk.domain.DeskRepository;
@@ -12,7 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static posmy.argos.desk.domain.DeskStatus.OCCUPIED;
 import static posmy.argos.desk.domain.DeskStatus.VACANT;
@@ -27,8 +31,12 @@ import static org.awaitility.Awaitility.await;
  * @author Rashidi Zin
  */
 @SpringBootTest
+@Testcontainers
 @TestPropertySource(properties = { "argos.desk.max-duration=1M", "argos.desk.scheduler-delay=10000" })
-class DeskSchedulerIntegrationTests extends MongoDBTestContainerSetup {
+class DeskSchedulerIntegrationTests {
+
+    @Container
+    private static final MongoDBContainer container = new MongoDBContainer();
 
     @Autowired
     private DeskRepository repository;
@@ -39,6 +47,12 @@ class DeskSchedulerIntegrationTests extends MongoDBTestContainerSetup {
     @Autowired
     private DeskProperties properties;
 
+    @DynamicPropertySource 
+    static void setupMongoDB(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.host", () -> container.getContainerIpAddress());
+        registry.add("spring.data.mongodb.port", () -> container.getMappedPort(27017));
+    }
+    
     @Test
     @DisplayName("Inactive OCCUPIED Desks will be mark as VACANT by scheduler")
     void updateInactiveOccupiedDesks() {

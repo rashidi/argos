@@ -1,6 +1,5 @@
 package posmy.argos.desk.domain;
 
-import posmy.argos.containers.mongodb.MongoDBTestContainerSetup;
 import posmy.argos.desk.history.domain.DeskOccupiedHistory;
 import posmy.argos.desk.history.domain.DeskOccupiedHistoryRepository;
 import posmy.argos.desk.junit.arguments.InvalidLocationsArgumentProvider;
@@ -17,8 +16,13 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static posmy.argos.desk.domain.DeskArea.DATA_AND_TECHNOLOGY;
 import static posmy.argos.desk.domain.DeskStatus.OCCUPIED;
@@ -44,7 +48,11 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  */
 @SpringBootTest
 @WithAzureADUser
-class DeskRepositoryRestResourceTests extends MongoDBTestContainerSetup {
+@Testcontainers
+class DeskRepositoryRestResourceTests {
+
+    @Container
+    private static final MongoDBContainer container = new MongoDBContainer();
 
     @Autowired
     private WebApplicationContext ctx;
@@ -57,7 +65,13 @@ class DeskRepositoryRestResourceTests extends MongoDBTestContainerSetup {
     @Autowired
     private DeskOccupiedHistoryRepository historyRepository;
 
-	@BeforeEach
+    @DynamicPropertySource 
+    static void setupMongoDB(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.host", () -> container.getContainerIpAddress());
+        registry.add("spring.data.mongodb.port", () -> container.getMappedPort(27017));
+    }
+    
+    @BeforeEach
     void setup() {
         mvc = webAppContextSetup(ctx)
                 .apply(springSecurity())

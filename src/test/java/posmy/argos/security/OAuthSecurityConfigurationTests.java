@@ -1,12 +1,14 @@
 package posmy.argos.security;
 
+import java.text.ParseException;
+
 import com.microsoft.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
 import com.microsoft.azure.spring.autoconfigure.aad.UserPrincipal;
 import com.microsoft.azure.spring.autoconfigure.aad.UserPrincipalManager;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.proc.BadJOSEException;
 import com.nimbusds.jwt.JWTClaimsSet;
-import net.minidev.json.JSONArray;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +19,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.text.ParseException;
+import net.minidev.json.JSONArray;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -34,11 +41,21 @@ import static org.springframework.http.HttpStatus.OK;
  * @author Rashidi Zin
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@Testcontainers
 class OAuthSecurityConfigurationTests {
 
+    @Container
+    private static final MongoDBContainer container = new MongoDBContainer();
+    
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @DynamicPropertySource
+    static void setupMongoDB(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.host", () -> container.getContainerIpAddress());
+        registry.add("spring.data.mongodb.port", () -> container.getMappedPort(27017));
+    }
+    
     @Test
     @DisplayName("Actuator endpoints can be accessed without authentication")
     void actuator() {

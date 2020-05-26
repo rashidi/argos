@@ -1,6 +1,12 @@
 package posmy.argos.desk.domain;
 
+import posmy.argos.desk.history.domain.DeskOccupiedHistory;
+import posmy.argos.desk.history.domain.DeskOccupiedHistoryRepository;
+import posmy.argos.desk.junit.arguments.InvalidLocationsArgumentProvider;
+import posmy.argos.security.azure.WithAzureADUser;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,12 +16,18 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
-import posmy.argos.desk.history.domain.DeskOccupiedHistory;
-import posmy.argos.desk.history.domain.DeskOccupiedHistoryRepository;
-import posmy.argos.desk.junit.arguments.InvalidLocationsArgumentProvider;
-import posmy.argos.security.azure.WithAzureADUser;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import static posmy.argos.desk.domain.DeskArea.DATA_AND_TECHNOLOGY;
+import static posmy.argos.desk.domain.DeskStatus.OCCUPIED;
+import static posmy.argos.desk.domain.DeskStatus.VACANT;
+import static posmy.argos.desk.helper.DeskTestHelper.create;
 
 import static java.time.Instant.now;
 import static java.time.temporal.ChronoUnit.HOURS;
@@ -24,21 +36,23 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-import static posmy.argos.desk.domain.DeskArea.DATA_AND_TECHNOLOGY;
-import static posmy.argos.desk.domain.DeskStatus.OCCUPIED;
-import static posmy.argos.desk.domain.DeskStatus.VACANT;
-import static posmy.argos.desk.helper.DeskTestHelper.create;
 
 /**
  * @author Rashidi Zin
  */
 @SpringBootTest
 @WithAzureADUser
+@Testcontainers
 class DeskRepositoryRestResourceTests {
+
+    @Container
+    private static final MongoDBContainer container = new MongoDBContainer();
 
     @Autowired
     private WebApplicationContext ctx;
@@ -51,6 +65,12 @@ class DeskRepositoryRestResourceTests {
     @Autowired
     private DeskOccupiedHistoryRepository historyRepository;
 
+    @DynamicPropertySource 
+    static void setupMongoDB(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.host", () -> container.getContainerIpAddress());
+        registry.add("spring.data.mongodb.port", () -> container.getMappedPort(27017));
+    }
+    
     @BeforeEach
     void setup() {
         mvc = webAppContextSetup(ctx)

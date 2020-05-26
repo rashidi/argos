@@ -21,6 +21,7 @@ repositories {
 
 ext {
     set('azureVersion', "2.2.0")
+    set('testContainersVersion', "1.14.2")
 }
 
 dependencies {
@@ -32,19 +33,25 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testCompile('org.testcontainers:mongodb')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation('org.awaitility:awaitility')
     testImplementation('org.springframework.security:spring-security-test')
-    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+    testImplementation('org.testcontainers:junit-jupiter')
 }
 
 dependencyManagement {
     imports {
         mavenBom "com.microsoft.azure:azure-spring-boot-bom:${azureVersion}"
     }
-
+    dependencies {
+        dependencySet(group: 'org.testcontainers', version: "${testContainersVersion}") {
+            entry('mongodb',)
+            entry('junit-jupiter')
+        }
+    }
 }
 
 test {

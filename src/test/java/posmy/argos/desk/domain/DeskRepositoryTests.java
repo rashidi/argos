@@ -5,25 +5,41 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.domain.Example;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.data.Index.atIndex;
-import static org.assertj.core.groups.Tuple.tuple;
 import static posmy.argos.desk.domain.DeskArea.COLLABORATION;
 import static posmy.argos.desk.domain.DeskArea.DATA_AND_TECHNOLOGY;
 import static posmy.argos.desk.domain.DeskStatus.OCCUPIED;
 import static posmy.argos.desk.domain.DeskStatus.VACANT;
 import static posmy.argos.desk.helper.DeskTestHelper.create;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.atIndex;
+import static org.assertj.core.api.Assertions.tuple;
+
 /**
  * @author Rashidi Zin
  */
 @DataMongoTest
+@Testcontainers
 class DeskRepositoryTests {
 
+    @Container
+    private static final MongoDBContainer container = new MongoDBContainer();
+    
     @Autowired
     private DeskRepository repository;
 
+    @DynamicPropertySource 
+    static void setupMongoDB(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.host", () -> container.getContainerIpAddress());
+        registry.add("spring.data.mongodb.port", () -> container.getMappedPort(27017));
+    }
+    
     @Test
     void findByStatus() {
         var desk = new Desk().area(DATA_AND_TECHNOLOGY).location(new DeskLocation().row("D").column(12)).status(VACANT);

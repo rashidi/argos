@@ -8,6 +8,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static posmy.argos.desk.helper.DeskTestHelper.create;
 
@@ -20,11 +25,21 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Rashidi Zin
  */
 @DataMongoTest
+@Testcontainers
 class DeskOccupiedHistoryRepositoryTests {
+
+    @Container
+    private static final MongoDBContainer container = new MongoDBContainer();
 
     @Autowired
     private DeskOccupiedHistoryRepository repository;
-
+    
+    @DynamicPropertySource 
+    static void setupMongoDB(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.host", () -> container.getContainerIpAddress());
+        registry.add("spring.data.mongodb.port", () -> container.getMappedPort(27017));
+    }
+    
     @Test
     void findFirstByLocationOrderByEndDesc() {
         var today = now();

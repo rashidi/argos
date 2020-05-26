@@ -1,29 +1,32 @@
 package posmy.argos.desk.domain;
 
+import posmy.argos.containers.mongodb.MongoDBTestContainerSetup;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.domain.Example;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.data.Index.atIndex;
-import static org.assertj.core.groups.Tuple.tuple;
 import static posmy.argos.desk.domain.DeskArea.COLLABORATION;
 import static posmy.argos.desk.domain.DeskArea.DATA_AND_TECHNOLOGY;
 import static posmy.argos.desk.domain.DeskStatus.OCCUPIED;
 import static posmy.argos.desk.domain.DeskStatus.VACANT;
 import static posmy.argos.desk.helper.DeskTestHelper.create;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.data.Index.atIndex;
+import static org.assertj.core.groups.Tuple.tuple;
+
 /**
  * @author Rashidi Zin
  */
 @DataMongoTest
-class DeskRepositoryTests {
-
+class DeskRepositoryTests extends MongoDBTestContainerSetup {
+    
     @Autowired
     private DeskRepository repository;
-
+        
     @Test
     void findByStatus() {
         var desk = new Desk().area(DATA_AND_TECHNOLOGY).location(new DeskLocation().row("D").column(12)).status(VACANT);

@@ -1,5 +1,6 @@
 package posmy.argos.desk.scheduler;
 
+import posmy.argos.containers.mongodb.MongoDBTestContainerSetup;
 import posmy.argos.desk.context.DeskProperties;
 import posmy.argos.desk.domain.Desk;
 import posmy.argos.desk.domain.DeskRepository;
@@ -27,7 +28,7 @@ import static org.awaitility.Awaitility.await;
  */
 @SpringBootTest
 @TestPropertySource(properties = { "argos.desk.max-duration=1M", "argos.desk.scheduler-delay=10000" })
-class DeskSchedulerIntegrationTests {
+class DeskSchedulerIntegrationTests extends MongoDBTestContainerSetup {
 
     @Autowired
     private DeskRepository repository;

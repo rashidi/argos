@@ -1,5 +1,6 @@
 package posmy.argos.desk.history.domain;
 
+import posmy.argos.containers.mongodb.MongoDBTestContainerSetup;
 import posmy.argos.desk.domain.DeskLocation;
 
 import java.util.List;
@@ -20,11 +21,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Rashidi Zin
  */
 @DataMongoTest
-class DeskOccupiedHistoryRepositoryTests {
+class DeskOccupiedHistoryRepositoryTests extends MongoDBTestContainerSetup {
 
     @Autowired
     private DeskOccupiedHistoryRepository repository;
-
+    
     @Test
     void findFirstByLocationOrderByEndDesc() {
         var today = now();

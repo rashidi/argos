@@ -1,7 +1,7 @@
 package posmy.argos.web;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * @author Rashidi Zin
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class HomeWebResource {
     
-    @RequestMapping("/")
+    @GetMapping("/")
     public String index() {
         return "index";
     }

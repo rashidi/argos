@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 @WebMvcTest(controllers = HomeWebResource.class)
 @Import(AzureADTestConfiguration.class)
-public class HomeWebResourceTests {
+class HomeWebResourceTests {
     
     @Autowired
     private WebApplicationContext ctx;

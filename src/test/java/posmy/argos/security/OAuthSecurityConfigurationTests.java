@@ -1,36 +1,19 @@
 package posmy.argos.security;
 
-import java.text.ParseException;
-
-import com.microsoft.azure.spring.autoconfigure.aad.AADAppRoleStatelessAuthenticationFilter;
-import com.microsoft.azure.spring.autoconfigure.aad.UserPrincipal;
-import com.microsoft.azure.spring.autoconfigure.aad.UserPrincipalManager;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.proc.BadJOSEException;
-import com.nimbusds.jwt.JWTClaimsSet;
+import posmy.argos.security.azure.AzureADTestConfiguration;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
-import net.minidev.json.JSONArray;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.GET;
@@ -40,21 +23,13 @@ import static org.springframework.http.HttpStatus.OK;
 /**
  * @author Rashidi Zin
  */
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@Testcontainers
+@SpringBootTest(webEnvironment = RANDOM_PORT, classes = OAuthSecurityConfiguration.class)
+@EnableAutoConfiguration(exclude = MongoAutoConfiguration.class)
+@Import(AzureADTestConfiguration.class)
 class OAuthSecurityConfigurationTests {
-
-    @Container
-    private static final MongoDBContainer container = new MongoDBContainer();
     
     @Autowired
     private TestRestTemplate restTemplate;
-
-    @DynamicPropertySource
-    static void setupMongoDB(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.host", () -> container.getContainerIpAddress());
-        registry.add("spring.data.mongodb.port", () -> container.getMappedPort(27017));
-    }
     
     @Test
     @DisplayName("Actuator endpoints can be accessed without authentication")
@@ -79,29 +54,9 @@ class OAuthSecurityConfigurationTests {
     @Test
     @DisplayName("Non actuator paths requires authentication")
     void accessWithoutAuthentication() {
-        var response = restTemplate.getForEntity("/", String.class);
+        var response = restTemplate.getForEntity("/api/desks", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(FORBIDDEN);
-    }
-
-    @TestConfiguration
-    static class UserPrincipalManagerTestConfiguration {
-
-        @Bean
-        @Primary
-        public AADAppRoleStatelessAuthenticationFilter aadAppRoleStatelessAuthenticationFilter() throws ParseException, JOSEException, BadJOSEException {
-            var principalManager = mock(UserPrincipalManager.class);
-
-            var roles = new JSONArray().appendElement("USER");
-            var claims = new JWTClaimsSet.Builder().claim("roles", roles).build();
-
-            var principal = new UserPrincipal(null, claims);
-
-            doReturn(principal).when(principalManager).buildUserPrincipal(anyString());
-
-            return new AADAppRoleStatelessAuthenticationFilter(principalManager);
-        }
-
     }
 
 }

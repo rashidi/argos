@@ -27,6 +27,7 @@ public class OAuthSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .and()
                 .authorizeRequests()
                     .requestMatchers(toAnyEndpoint()).permitAll()
+                    .regexMatchers("/").permitAll()
                     .anyRequest().authenticated()
             .and()
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);

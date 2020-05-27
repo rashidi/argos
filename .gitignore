@@ -42,3 +42,5 @@ src/main/js/node
 src/main/js/node_modules
 src/main/js/public/build
 src/main/js/package-lock.json
+src/main/resources/static/css/bundle.css*
+src/main/resources/static/js

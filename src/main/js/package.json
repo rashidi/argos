@@ -1,25 +1,23 @@
 {
   "name": "argos-web",
   "version": "1.0.0",
-  "private": true,
-  "description": "Argos web application",
-  "dependencies": {},
-  "devDependencies": {
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11"
-  },
-  "scripts": {
-    "build": "webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rashidi/argos.git"
-  },
   "author": "Rashidi Zin",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/rashidi/argos/issues"
+  "private": true,
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "sirv public"
   },
-  "homepage": "https://github.com/rashidi/argos#readme"
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^12.0.0",
+    "@rollup/plugin-node-resolve": "^8.0.0",
+    "rollup": "^2.3.4",
+    "rollup-plugin-livereload": "^1.0.0",
+    "rollup-plugin-svelte": "^5.0.3",
+    "rollup-plugin-terser": "^5.1.2",
+    "svelte": "^3.0.0"
+  },
+  "dependencies": {
+    "sirv-cli": "^0.4.4"
+  }
 }

@@ -36,3 +36,8 @@ bin/
 
 ### Github ###
 .github
+
+### UI ###
+src/main/js/node
+src/main/js/node_modules
+src/main/js/package-lock.json

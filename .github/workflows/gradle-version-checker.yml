@@ -2,7 +2,7 @@ name: Gradle Version Checker
 
 on:
   schedule:
-    - cron: '* * * * *'
+    - cron: '0 21 * * *'
 
 jobs:
   checker:

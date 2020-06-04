@@ -2,4 +2,13 @@ name: Gradle Version Checker
 
 on:
   schedule:
-    - cron: '0 21 * * *'
+    - cron: '* * * * *'
+
+jobs:
+  checker:
+    name: Get latest version
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Gradle Self Updater
+        uses: tomsanbear/gradle-self-updater@v0.1.1

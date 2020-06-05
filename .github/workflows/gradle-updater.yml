@@ -1,9 +1,16 @@
-workflow "Daily" {
-  on = "schedule(0 * * * *)"
-  resolves = ["Update Gradle Wrapper"]
-}
+name: Gradle Version Updater
 
-action "Update Gradle Wrapper" {
-  uses = "rahulsom/gradle-up@master"
-  secrets = ["GITHUB_TOKEN"]
-}
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+
+jobs:
+  checker:
+    name: Get latest version
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Gradle Self Updater
+        uses: rahulsom/gradle-up@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

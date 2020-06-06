@@ -2,7 +2,7 @@ name: Gradle Version Updater
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/1 * * * *'
 
 jobs:
   checker:
@@ -10,7 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - uses: actions/checkout@v2
+      - name: Fetch recent updates
+        run: git fetch --prune --unshallow
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11.0.6
+
       - name: Gradle Self Updater
         uses: rahulsom/gradle-up@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

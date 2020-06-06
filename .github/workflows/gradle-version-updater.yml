@@ -2,10 +2,10 @@ name: Gradle Version Updater
 
 on:
   schedule:
-    - cron: '*/1 * * * *'
+    - cron: '0 21 * * *'
 
 jobs:
-  checker:
+  update:
     name: Get latest version
     runs-on: ubuntu-latest
     

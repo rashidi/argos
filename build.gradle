@@ -22,7 +22,7 @@ repositories {
 
 ext {
     set('azureVersion', "2.2.4")
-    set('testContainersVersion', "1.14.2")
+    set('testContainersVersion', "1.14.3")
 }
 
 dependencies {

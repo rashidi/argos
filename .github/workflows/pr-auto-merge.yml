@@ -3,9 +3,10 @@ on:
   pull_request:
     branches: 
       - 'snapshot-**'
-      - 'dependabot/**'
+      - 'dependabot/gradle/**'
     paths: 
       - 'gradle.properties'
+      - 'build.gradle'
     types: 
       - labeled
       - opened
